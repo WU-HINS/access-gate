@@ -24,3 +24,6 @@ pgdata/
 .vscode/
 .idea/
 .DS_Store
+
+# ★ 本机推送用的 SSH 私钥（**绝不入库**）：见 reports/github-push-setup.md
+.secrets/
