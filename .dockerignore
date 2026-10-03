@@ -1,0 +1,31 @@
+# 构建上下文排除（此前**完全缺失**——导致 node_modules / .git / reports 全部被送进 daemon）
+#
+# ★ 两条实际影响：
+#   1. **构建速度**：`node_modules` 可能有数百 MB，每次 build 都要打包上传给 daemon；
+#   2. **安全**：`.env`、密钥文件、本地数据库目录若进了上下文，
+#      就可能被某条 COPY 指令意外带进镜像层（而层是不可逆的）。
+
+node_modules
+.git
+.gitignore
+
+# 运行/测试产物（镜像里会重新安装依赖与重新编译）
+reports
+coverage
+*.log
+
+# 本地数据与密钥
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# 编辑器与系统文件
+.vscode
+.idea
+.DS_Store
+
+# 快照与临时目录
+.snapshots
+tmp

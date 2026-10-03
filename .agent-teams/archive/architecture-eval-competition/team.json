@@ -1,0 +1,12 @@
+{
+  "name": "architecture-eval-competition",
+  "id": "architecture-eval-competition",
+  "description": "三模型架构评估竞争：claude-sonnet-4-6 / claude-fable-5 / deepseek-v4.1-flash",
+  "captainSessionId": "session-e25164ad-ee60-4092-9f76-8468fad29398",
+  "createdAt": 1790001230181,
+  "members": [],
+  "tasks": [],
+  "taskSeq": 0,
+  "phase": "staged",
+  "planReviewState": "awaiting_review"
+}

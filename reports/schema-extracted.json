@@ -1,0 +1,4663 @@
+[
+  {
+    "tableName": "ag_users",
+    "declName": "users",
+    "line": 56,
+    "columns": [
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "email",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "emailVerified",
+        "kind": "boolean",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "username",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "passwordHash",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "status",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "source",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "locale",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "tags",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "primarySubject",
+        "kind": "jsonb",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "profile",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "lastLoginAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "updatedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "deletedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "email"
+        ],
+        "name": "uq_ag_users_email",
+        "where": "deleted_at IS NULL"
+      },
+      {
+        "kind": "unique",
+        "columns": [
+          "username"
+        ],
+        "name": "uq_ag_users_username",
+        "where": "deleted_at IS NULL"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "status"
+        ],
+        "name": "ix_ag_users_status"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_identities",
+    "declName": "identities",
+    "line": 86,
+    "columns": [
+      {
+        "name": "ownerScope",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "ownerId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "userId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "provider",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "providerUserId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "subjectRef",
+        "kind": "jsonb",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "claimSnapshot",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "verifiedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "updatedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "ownerScope",
+          "ownerId",
+          "provider",
+          "providerUserId"
+        ],
+        "name": "uq_ag_identities_provider_uid"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "userId"
+        ],
+        "name": "ix_ag_identities_user"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "provider"
+        ],
+        "name": "ix_ag_identities_provider"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_sessions",
+    "declName": "sessions",
+    "line": 124,
+    "columns": [
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "userId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "tokenHash",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "userAgent",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "ip",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "expiresAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "revokedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "realm",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "activeDeveloperId",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "activeSiteId",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "activeSiteUpdatedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "tokenHash"
+        ],
+        "name": "uq_ag_sessions_token"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "userId"
+        ],
+        "name": "ix_ag_sessions_user"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "expiresAt"
+        ],
+        "name": "ix_ag_sessions_expiry"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_email_rules",
+    "declName": "emailRules",
+    "line": 147,
+    "columns": [
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "listType",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "matchType",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "pattern",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "priority",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "note",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "enabled",
+        "kind": "boolean",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "siteId",
+          "matchType",
+          "pattern"
+        ],
+        "name": "uq_ag_email_rules_pattern"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "enabled",
+          "priority"
+        ],
+        "name": "ix_ag_email_rules_order"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_invite_codes",
+    "declName": "inviteCodes",
+    "line": 163,
+    "columns": [
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "code",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "createdBy",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "maxUses",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "usedCount",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "grantsFacts",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "expiresAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "siteId",
+          "code"
+        ],
+        "name": "uq_ag_invite_codes_code"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_developers",
+    "declName": "developers",
+    "line": 184,
+    "columns": [
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "username",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "displayName",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "email",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "passwordHash",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "emailVerified",
+        "kind": "boolean",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "role",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "status",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "locale",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "security",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "lastLoginAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "userId",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "updatedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "username"
+        ],
+        "name": "uq_ag_developers_username"
+      },
+      {
+        "kind": "unique",
+        "columns": [
+          "email"
+        ],
+        "name": "uq_ag_developers_email"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "role",
+          "status"
+        ],
+        "name": "ix_ag_developers_role"
+      }
+    ],
+    "options": {
+      "siteScoped": false
+    }
+  },
+  {
+    "tableName": "ag_sites",
+    "declName": "sites",
+    "line": 227,
+    "columns": [
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "siteId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "nickname",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "developerId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "status",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "quota",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "settings",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "updatedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "siteId"
+        ],
+        "name": "uq_ag_sites_site_id"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "developerId"
+        ],
+        "name": "ix_ag_sites_developer"
+      }
+    ],
+    "options": {
+      "siteScoped": false
+    }
+  },
+  {
+    "tableName": "ag_plugin_instances",
+    "declName": "pluginInstances",
+    "line": 253,
+    "columns": [
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "pluginId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "instanceKey",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "scope",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "developerId",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "label",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "config",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "configHash",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "enabled",
+        "kind": "boolean",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "updatedBy",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "updatedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "developerId",
+          "pluginId",
+          "instanceKey"
+        ],
+        "name": "uq_ag_plugin_inst_dev",
+        "where": "developer_id IS NOT NULL"
+      },
+      {
+        "kind": "unique",
+        "columns": [
+          "siteId",
+          "pluginId",
+          "instanceKey"
+        ],
+        "name": "uq_ag_plugin_inst_site",
+        "where": "site_id IS NOT NULL"
+      }
+    ],
+    "options": {
+      "siteScoped": false,
+      "dualScopeCheck": "(scope = 'site' AND siteId IS NOT NULL AND developerId IS NULL) OR (scope = 'developer' AND developerId IS NOT NULL AND siteId IS NULL)"
+    }
+  },
+  {
+    "tableName": "ag_dev_invitations",
+    "declName": "devInvitations",
+    "line": 307,
+    "columns": [
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "codeHash",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "codePrefix",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "targetEmail",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "siteMode",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "maxUses",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "usedCount",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "expiresAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "usedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "usedBy",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdBy",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "siteId",
+          "codeHash"
+        ],
+        "name": "uq_ag_dev_invitations_code"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "targetEmail",
+          "expiresAt"
+        ],
+        "name": "ix_ag_dev_invitations_email"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_quota_counters",
+    "declName": "quotaCounters",
+    "line": 362,
+    "columns": [
+      {
+        "name": "quotaKey",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "windowStart",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "used",
+        "kind": "bigint",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "updatedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "index",
+        "columns": [
+          "windowStart"
+        ],
+        "name": "ix_ag_quota_window"
+      }
+    ],
+    "options": {
+      "siteScoped": false
+    }
+  },
+  {
+    "tableName": "ag_platform_settings",
+    "declName": "platformSettings",
+    "line": 374,
+    "columns": [
+      {
+        "name": "key",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "value",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "lockedByEnv",
+        "kind": "boolean",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "updatedBy",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "updatedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "index",
+        "columns": [
+          "updatedAt"
+        ],
+        "name": "ix_ag_platform_settings_time"
+      }
+    ],
+    "options": {
+      "siteScoped": false
+    }
+  },
+  {
+    "tableName": "ag_plugins",
+    "declName": "plugins",
+    "line": 407,
+    "columns": [
+      {
+        "name": "id",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "kind",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "name",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "version",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "apiVersion",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "runtime",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "source",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "status",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "manifest",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "namespace",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "digest",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "signatureVerified",
+        "kind": "boolean",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "runtimeState",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "enabledAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "lastError",
+        "kind": "text",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "installedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "updatedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "index",
+        "columns": [
+          "status",
+          "kind"
+        ],
+        "name": "ix_ag_plugins_status_kind"
+      },
+      {
+        "kind": "unique",
+        "columns": [
+          "namespace"
+        ],
+        "name": "uq_ag_plugins_namespace",
+        "where": "status = 'enabled'"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_plugin_configs",
+    "declName": "pluginConfigs",
+    "line": 449,
+    "columns": [
+      {
+        "name": "id",
+        "kind": "bigserial",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "instanceId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "pluginId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "version",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "config",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "configHash",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "status",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "updatedBy",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "pluginId",
+          "version"
+        ],
+        "name": "uq_ag_plugin_configs_ver"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "pluginId",
+          "status"
+        ],
+        "name": "ix_ag_plugin_configs_status"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_plugin_grants",
+    "declName": "pluginGrants",
+    "line": 472,
+    "columns": [
+      {
+        "name": "ownerScope",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "ownerId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "pluginId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "permission",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "grantedBy",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "grantedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "revokedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "ownerScope",
+          "ownerId",
+          "pluginId",
+          "permission"
+        ],
+        "name": "uq_ag_plugin_grants"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "permission"
+        ],
+        "name": "ix_ag_plugin_grants_perm"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_plugin_bindings",
+    "declName": "pluginBindings",
+    "line": 494,
+    "columns": [
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "userId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "pluginId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "instanceKey",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "externalId",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "externalName",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "status",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "credentialRef",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "lastFactAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "lastError",
+        "kind": "text",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "updatedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "siteId",
+          "userId",
+          "pluginId",
+          "instanceKey"
+        ],
+        "name": "uq_ag_bindings_user_plugin"
+      },
+      {
+        "kind": "unique",
+        "columns": [
+          "siteId",
+          "pluginId",
+          "instanceKey",
+          "externalId"
+        ],
+        "name": "uq_ag_bindings_external",
+        "where": "external_id IS NOT NULL"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "status"
+        ],
+        "name": "ix_ag_bindings_status"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_plugin_facts",
+    "declName": "pluginFacts",
+    "line": 524,
+    "columns": [
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "userId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "pluginId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "namespace",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "instanceKey",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "facts",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "schemaValidated",
+        "kind": "boolean",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "fingerprint",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "source",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "costTokens",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "collectedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "expiresAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "siteId",
+          "userId",
+          "namespace",
+          "instanceKey"
+        ],
+        "name": "uq_ag_facts_user_namespace"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "pluginId"
+        ],
+        "name": "ix_ag_facts_plugin"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "expiresAt"
+        ],
+        "name": "ix_ag_facts_expiry"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_plugin_invocations",
+    "declName": "pluginInvocations",
+    "line": 558,
+    "columns": [
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "bigserial",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "pluginId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "op",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "userId",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "status",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "deniedPermission",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "egressHost",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "durationMs",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "costTokens",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "error",
+        "kind": "text",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "traceId",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "index",
+        "columns": [
+          "pluginId",
+          "createdAt"
+        ],
+        "name": "ix_ag_plugin_inv_plugin_time"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "status",
+          "createdAt"
+        ],
+        "name": "ix_ag_plugin_inv_status_time"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_plugin_storage",
+    "declName": "pluginStorage",
+    "line": 586,
+    "columns": [
+      {
+        "name": "ownerScope",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "ownerId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "instanceKey",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "pluginId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "key",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "value",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "expiresAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "updatedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "ownerScope",
+          "ownerId",
+          "pluginId",
+          "instanceKey",
+          "key"
+        ],
+        "name": "uq_ag_plugin_storage"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "expiresAt"
+        ],
+        "name": "ix_ag_plugin_storage_expiry"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_llm_cache",
+    "declName": "llmCache",
+    "line": 605,
+    "columns": [
+      {
+        "name": "ownerScope",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "ownerId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "inputHash",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "model",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "promptVer",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "pluginId",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "result",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "promptTokens",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "completionTokens",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "expiresAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "ownerScope",
+          "ownerId",
+          "inputHash"
+        ],
+        "name": "uq_ag_llm_cache_input"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "expiresAt"
+        ],
+        "name": "ix_ag_llm_cache_expiry"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_plugin_endpoints",
+    "declName": "pluginEndpoints",
+    "line": 633,
+    "columns": [
+      {
+        "name": "ownerScope",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "ownerId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "pluginId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "method",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "path",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "mountPath",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "auth",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "visibility",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "kind",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "spec",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "enabled",
+        "kind": "boolean",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "approvedBy",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "approvedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "ownerScope",
+          "ownerId",
+          "method",
+          "mountPath"
+        ],
+        "name": "uq_ag_plugin_endpoints_route"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "pluginId"
+        ],
+        "name": "ix_ag_plugin_endpoints_plugin"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_plugin_ui_contributions",
+    "declName": "pluginUiContributions",
+    "line": 669,
+    "columns": [
+      {
+        "name": "ownerScope",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "ownerId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "pluginId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "type",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "key",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "audience",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "renderMode",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "spec",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "order",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "enabled",
+        "kind": "boolean",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "approvedBy",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "approvedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "type",
+          "key"
+        ],
+        "name": "uq_ag_plugin_ui_key"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "pluginId"
+        ],
+        "name": "ix_ag_plugin_ui_plugin"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_plugin_packages",
+    "declName": "pluginPackages",
+    "line": 706,
+    "columns": [
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "pluginId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "version",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "digest",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "sizeBytes",
+        "kind": "bigint",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "storageKind",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "objectKey",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "blob",
+        "kind": "binary",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "signature",
+        "kind": "text",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "pluginId",
+          "version"
+        ],
+        "name": "uq_ag_plugin_packages"
+      }
+    ],
+    "options": {
+      "siteScoped": false
+    }
+  },
+  {
+    "tableName": "ag_policies",
+    "declName": "policies",
+    "line": 739,
+    "columns": [
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "code",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "name",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "description",
+        "kind": "text",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "enabled",
+        "kind": "boolean",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "priority",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "tier",
+        "kind": "integer",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "requiresTier",
+        "kind": "integer",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "collision",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "activeVersionId",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "updatedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "siteId",
+          "code"
+        ],
+        "name": "uq_ag_policies_code"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "enabled",
+          "priority"
+        ],
+        "name": "ix_ag_policies_order"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_policy_versions",
+    "declName": "policyVersions",
+    "line": 761,
+    "columns": [
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "policyId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "version",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "spec",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "specYaml",
+        "kind": "text",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "specJson",
+        "kind": "jsonb",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "specGraph",
+        "kind": "jsonb",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "origin",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "specHash",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "status",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "createdBy",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "activatedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "siteId",
+          "policyId",
+          "version"
+        ],
+        "name": "uq_ag_policy_versions"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "specHash"
+        ],
+        "name": "ix_ag_policy_versions_hash"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_policy_assignments",
+    "declName": "policyAssignments",
+    "line": 793,
+    "columns": [
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "policyId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "targetType",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "targetRef",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "rolloutPercent",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "enabled",
+        "kind": "boolean",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "index",
+        "columns": [
+          "policyId",
+          "targetType"
+        ],
+        "name": "ix_ag_assignments_policy"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "targetType",
+          "targetRef"
+        ],
+        "name": "ix_ag_assignments_target"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_user_policy_state",
+    "declName": "userPolicyState",
+    "line": 818,
+    "columns": [
+      {
+        "name": "baseline",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "userId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "policyId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "state",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "satisfiedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "grantedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "graceUntil",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "nextCheckAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "lastOutcome",
+        "kind": "enum",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "indeterminateSince",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "consecutiveIndeterminate",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "version",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "lastChangedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "actionSeq",
+        "kind": "bigint",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "lastEvalId",
+        "kind": "bigint",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "failStreak",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "appliedActions",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "updatedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "siteId",
+          "userId",
+          "policyId"
+        ],
+        "name": "uq_ag_state_user_policy"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "state"
+        ],
+        "name": "ix_ag_state_state"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "nextCheckAt"
+        ],
+        "name": "ix_ag_state_next_check"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_evaluations",
+    "declName": "evaluations",
+    "line": 893,
+    "columns": [
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "traceId",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "bigserial",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "userId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "policyId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "policyVerId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "trigger",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "inputs",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "itemResults",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "outcome",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "score",
+        "kind": "numeric",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "durationMs",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "error",
+        "kind": "text",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "index",
+        "columns": [
+          "userId",
+          "createdAt"
+        ],
+        "name": "ix_ag_eval_user_time"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "policyId",
+          "outcome"
+        ],
+        "name": "ix_ag_eval_policy_outcome"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_actions_log",
+    "declName": "actionsLog",
+    "line": 924,
+    "columns": [
+      {
+        "name": "traceId",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "actionSeq",
+        "kind": "bigint",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "bigserial",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "evalId",
+        "kind": "bigint",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "userId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "policyId",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "action",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "idempotencyKey",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "params",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "status",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "result",
+        "kind": "jsonb",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "blockedReason",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "skipReason",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "attempts",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "request",
+        "kind": "jsonb",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "response",
+        "kind": "jsonb",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "error",
+        "kind": "text",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "startedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "finishedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "siteId",
+          "idempotencyKey"
+        ],
+        "name": "uq_ag_actions_idem"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "userId",
+          "createdAt"
+        ],
+        "name": "ix_ag_actions_user_time"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "status"
+        ],
+        "name": "ix_ag_actions_status"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_checkin_entitlements",
+    "declName": "checkinEntitlements",
+    "line": 968,
+    "columns": [
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "userId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "scope",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "sourcePolicyId",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "grantedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "revokedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "siteId",
+          "userId",
+          "scope"
+        ],
+        "name": "uq_ag_checkin_entitlements"
+      }
+    ],
+    "options": {
+      "siteScoped": true
+    }
+  },
+  {
+    "tableName": "ag_checkin_records",
+    "declName": "checkinRecords",
+    "line": 980,
+    "columns": [
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "bigserial",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "userId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "checkinDate",
+        "kind": "date",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "quotaAwarded",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "grantState",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "requestId",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "grantVia",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "providerLogId",
+        "kind": "bigint",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "streak",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "siteId",
+          "userId",
+          "checkinDate"
+        ],
+        "name": "uq_ag_checkin_user_date"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_external_subjects",
+    "declName": "externalSubjects",
+    "line": 1010,
+    "columns": [
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "provider",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "externalId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "displayName",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "email",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "attributes",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "watched",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "fingerprint",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "raw",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "syncedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "deletedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "siteId",
+          "provider",
+          "externalId"
+        ],
+        "name": "uq_ag_external_subjects"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "provider",
+          "email"
+        ],
+        "name": "ix_ag_ext_subjects_email"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_provider_sync_state",
+    "declName": "providerSyncState",
+    "line": 1040,
+    "columns": [
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "provider",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "cursor",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "lastSeenKey",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "lastIncrementalAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "lastFullSyncAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "lastFullSyncCount",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "lastError",
+        "kind": "text",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "capabilities",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "driftPolicy",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "updatedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "primaryKey",
+        "columns": [
+          "siteId",
+          "provider"
+        ],
+        "name": "pk_ag_provider_sync_state"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_secrets",
+    "declName": "secrets",
+    "line": 1067,
+    "columns": [
+      {
+        "name": "ownerScope",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "ownerId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "key",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "ciphertext",
+        "kind": "text",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "iv",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "authTag",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "keyVersion",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "rotatedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "updatedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "ownerScope",
+          "ownerId",
+          "key"
+        ],
+        "name": "uq_ag_secrets_key"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_oidc_signing_keys",
+    "declName": "oidcSigningKeys",
+    "line": 1092,
+    "columns": [
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "kid",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "kty",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "alg",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "crv",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "publicJwk",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "privateCiphertext",
+        "kind": "text",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "privateIv",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "privateAuthTag",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "masterKeyVersion",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "status",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "activatedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "retiredFromSigningAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "removeAfter",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "kid"
+        ],
+        "name": "uq_ag_oidc_keys_kid"
+      },
+      {
+        "kind": "unique",
+        "columns": [
+          "alg"
+        ],
+        "name": "uq_ag_oidc_keys_active_alg",
+        "where": "status = 'active'"
+      },
+      {
+        "kind": "unique",
+        "columns": [
+          "alg"
+        ],
+        "name": "uq_ag_oidc_keys_standby_alg",
+        "where": "status = 'standby'"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "status"
+        ],
+        "name": "ix_ag_oidc_keys_status"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "removeAfter"
+        ],
+        "name": "ix_ag_oidc_keys_remove_after"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_verify_clients",
+    "declName": "verifyClients",
+    "line": 1144,
+    "columns": [
+      {
+        "name": "ownerScope",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "ownerId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "clientId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "name",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "secretHash",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "secretPrefix",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "scopes",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "allowedSubjects",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "callbackUrl",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "status",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "lastUsedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdBy",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "clientId"
+        ],
+        "name": "uq_ag_verify_clients_id"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "status"
+        ],
+        "name": "ix_ag_verify_clients_status"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_verify_challenges",
+    "declName": "verifyChallenges",
+    "line": 1173,
+    "columns": [
+      {
+        "name": "ownerScope",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "ownerId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "challengeId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "userCode",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "clientId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "subjectType",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "subjectValue",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "scopes",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "status",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "userId",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "approvedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "expiresAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "deliveries",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "lastPolledAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "challengeId"
+        ],
+        "name": "uq_ag_challenges_id"
+      },
+      {
+        "kind": "unique",
+        "columns": [
+          "userCode"
+        ],
+        "name": "uq_ag_challenges_code",
+        "where": "status = 'pending'"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "expiresAt"
+        ],
+        "name": "ix_ag_challenges_expiry"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_verify_assertions",
+    "declName": "verifyAssertions",
+    "line": 1212,
+    "columns": [
+      {
+        "name": "ownerScope",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "ownerId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "bigserial",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "clientId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "subjectType",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "subjectValue",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "userId",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "claims",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "matched",
+        "kind": "boolean",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "signatureKid",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "via",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "ip",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "expiresAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "revokedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "index",
+        "columns": [
+          "clientId",
+          "createdAt"
+        ],
+        "name": "ix_ag_assertions_client_time"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "subjectType",
+          "subjectValue"
+        ],
+        "name": "ix_ag_assertions_subject"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_plugin_tokens",
+    "declName": "pluginTokens",
+    "line": 1239,
+    "columns": [
+      {
+        "name": "ownerScope",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "ownerId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "pluginId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "name",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "tokenHash",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "tokenPrefix",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "scopes",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "expiresAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "lastUsedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "revokedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "tokenHash"
+        ],
+        "name": "uq_ag_plugin_tokens_hash"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "pluginId"
+        ],
+        "name": "ix_ag_plugin_tokens_plugin"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_oidc_providers",
+    "declName": "oidcProviders",
+    "line": 1265,
+    "columns": [
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "ref",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "label",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "direction",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "issuer",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "wellKnown",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "clientId",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "clientSecretRef",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "redirectUris",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "scopes",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "signingAlgs",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "exposedClaims",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "allowPlatformLogin",
+        "kind": "boolean",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "status",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "updatedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "ref"
+        ],
+        "name": "uq_ag_oidc_providers_ref"
+      },
+      {
+        "kind": "unique",
+        "columns": [
+          "issuer"
+        ],
+        "name": "uq_ag_oidc_providers_issuer"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "direction"
+        ],
+        "name": "ix_ag_oidc_providers_dir"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_oidc_login_transactions",
+    "declName": "oidcLoginTransactions",
+    "line": 1308,
+    "columns": [
+      {
+        "name": "state",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "codeVerifier",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "nonce",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "returnTo",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "targetSiteId",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "expiresAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "index",
+        "columns": [
+          "expiresAt"
+        ],
+        "name": "ix_ag_oidc_login_tx_expires"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_verify_nonces",
+    "declName": "verifyNonces",
+    "line": 1350,
+    "columns": [
+      {
+        "name": "clientId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "nonce",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "expiresAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "primaryKey",
+        "columns": [
+          "clientId",
+          "nonce"
+        ],
+        "name": "pk_ag_verify_nonces"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "expiresAt"
+        ],
+        "name": "ix_ag_verify_nonces_expires"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_oauth_clients",
+    "declName": "oauthClients",
+    "line": 1374,
+    "columns": [
+      {
+        "name": "clientId",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "name",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "redirectUris",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "scopes",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "status",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "index",
+        "columns": [
+          "status"
+        ],
+        "name": "ix_ag_oauth_clients_status"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_oauth_codes",
+    "declName": "oauthCodes",
+    "line": 1387,
+    "columns": [
+      {
+        "name": "code",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "clientId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "redirectUri",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "subject",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "displayName",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "scopes",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "codeChallenge",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "nonce",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "issuedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "expiresAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "redeemed",
+        "kind": "boolean",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "index",
+        "columns": [
+          "expiresAt"
+        ],
+        "name": "ix_ag_oauth_codes_expires"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_oauth_refresh_tokens",
+    "declName": "oauthRefreshTokens",
+    "line": 1408,
+    "columns": [
+      {
+        "name": "tokenHash",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "clientId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "subject",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "scopes",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "expiresAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "revoked",
+        "kind": "boolean",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "index",
+        "columns": [
+          "subject"
+        ],
+        "name": "ix_ag_oauth_refresh_subject"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "expiresAt"
+        ],
+        "name": "ix_ag_oauth_refresh_expires"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_audit_log",
+    "declName": "auditLog",
+    "line": 1428,
+    "columns": [
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "bigserial",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "actorType",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "actorId",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "developerId",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "realm",
+        "kind": "enum",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "action",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "targetType",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "targetId",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "before",
+        "kind": "jsonb",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "after",
+        "kind": "jsonb",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "ip",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "userAgent",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "traceId",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "index",
+        "columns": [
+          "actorType",
+          "actorId",
+          "createdAt"
+        ],
+        "name": "ix_ag_audit_actor"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "targetType",
+          "targetId"
+        ],
+        "name": "ix_ag_audit_target"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "createdAt"
+        ],
+        "name": "ix_ag_audit_time"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "developerId",
+          "createdAt"
+        ],
+        "name": "ix_ag_audit_developer"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_jobs",
+    "declName": "jobs",
+    "line": 1466,
+    "columns": [
+      {
+        "name": "ownerScope",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "ownerId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "jobKey",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "status",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "lockedBy",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "lockedUntil",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "lastRunAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "nextRunAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "runCount",
+        "kind": "bigint",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "failCount",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "backoffUntil",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "cursor",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "lastError",
+        "kind": "text",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "updatedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "ownerScope",
+          "ownerId",
+          "jobKey"
+        ],
+        "name": "uq_ag_jobs_key"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "status",
+          "nextRunAt"
+        ],
+        "name": "ix_ag_jobs_due"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_event_outbox",
+    "declName": "eventOutbox",
+    "line": 1498,
+    "columns": [
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "eventId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "type",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "payload",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "status",
+        "kind": "enum",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "attempts",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "nextAttemptAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "deliveredAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "lastError",
+        "kind": "text",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "traceId",
+        "kind": "varchar",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "siteId",
+          "eventId"
+        ],
+        "name": "uq_ag_outbox_event"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "siteId",
+          "status",
+          "nextAttemptAt"
+        ],
+        "name": "ix_ag_outbox_due"
+      }
+    ],
+    "options": {}
+  },
+  {
+    "tableName": "ag_dead_letters",
+    "declName": "deadLetters",
+    "line": 1531,
+    "columns": [
+      {
+        "name": "id",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": true
+      },
+      {
+        "name": "siteId",
+        "kind": "uuid",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "eventId",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "type",
+        "kind": "varchar",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "payload",
+        "kind": "jsonb",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "attempts",
+        "kind": "integer",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "lastError",
+        "kind": "text",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "failedAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      },
+      {
+        "name": "replayedAt",
+        "kind": "timestamp",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "replayedBy",
+        "kind": "uuid",
+        "notNull": false,
+        "primaryKey": false
+      },
+      {
+        "name": "createdAt",
+        "kind": "timestamp",
+        "notNull": true,
+        "primaryKey": false
+      }
+    ],
+    "indexes": [
+      {
+        "kind": "unique",
+        "columns": [
+          "siteId",
+          "eventId"
+        ],
+        "name": "uq_ag_dead_letters_event"
+      },
+      {
+        "kind": "index",
+        "columns": [
+          "siteId",
+          "replayedAt"
+        ],
+        "name": "ix_ag_dead_letters_pending"
+      }
+    ],
+    "options": {}
+  }
+]

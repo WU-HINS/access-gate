@@ -1,0 +1,26 @@
+# 依赖：由 `npm ci` 重新安装，不入库
+node_modules/
+
+# ★★ vendored 的**独立仓库**：`new-api/` 自带 `.git`（约 102M），
+#    它是被参考/对接的上游项目，不是本项目的源码 —— 入库会把它的历史一并带进来，
+#    也会让本仓库凭空膨胀百兆。需要时按 README 的说明单独 clone。
+new-api/
+
+# 运行 / 测试产物
+*.log
+coverage/
+tmp/
+.pglite/
+pgdata/
+
+# 本地数据与密钥（★ 绝不入库）
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# 编辑器与系统文件
+.vscode/
+.idea/
+.DS_Store

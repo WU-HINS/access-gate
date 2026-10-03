@@ -1,0 +1,58 @@
+# access-gate 二进制部署（**无容器**）
+#
+# 安装：
+#   install -m 0644 deploy/access-gate.service /etc/systemd/system/
+#   install -d -m 0750 /etc/access-gate
+#   install -m 0640 deploy/access-gate.env.example /etc/access-gate/env   # 再填入真实值
+#   systemctl daemon-reload && systemctl enable --now access-gate
+#
+# 完整步骤与判据见 `reports/binary-deployment.md`。
+
+[Unit]
+Description=access-gate（通用信任引擎）
+Documentation=file:///opt/access-gate/reports/binary-deployment.md
+After=network-online.target
+Wants=network-online.target
+# ★ 刻意**不**写 `Requires=postgresql.service`：PG 是硬依赖（连不上会立刻失败），
+#   但写成 Requires 会让 PG 重启时**连带停掉本服务**；而正确的行为是"等它回来并重连"。
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/access-gate
+# ★ 非 root：不绑特权端口、不写系统目录，没有 root 需求
+User=access-gate
+Group=access-gate
+
+# ★ 密钥**不进 unit 文件**（unit 可被 `systemctl show` 读出）
+EnvironmentFile=/etc/access-gate/env
+
+# ★ 不在 ExecStartPre 跑迁移：多实例会并发迁移；迁移是**变更操作**，
+#   应由发布流程显式执行（`npm run db:migrate`），而不是每次重启都尝试。
+ExecStart=/usr/bin/node --experimental-strip-types /opt/access-gate/tools/serve.ts --mode=real --port=8799
+
+Restart=always
+RestartSec=3
+# ★ 启动超时给足：真实模式要建连、加载密钥、按 digest 拉回插件包体
+TimeoutStartSec=90
+# ★ SIGTERM 让服务优雅关闭（在途请求走完）
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+# ── 加固（每条都有理由，不是抄模板）──
+NoNewPrivileges=true              # 无 setuid 需求
+ProtectSystem=strict              # 系统目录只读
+ProtectHome=true                  # 不读用户家目录
+PrivateTmp=true                   # 独立 /tmp
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+# ★ 唯一需要写的地方：本地插件包缓存（D9 的"可丢弃运行时缓存"）
+ReadWritePaths=/opt/access-gate/plugins
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=access-gate
+
+[Install]
+WantedBy=multi-user.target

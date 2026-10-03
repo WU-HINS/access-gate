@@ -1,0 +1,41 @@
+{
+  "name": "model-competition-eval",
+  "id": "model-competition-eval",
+  "description": "access-gate 架构全量评估：三模型竞争（claude-sonnet-4-6 / claude-fable-5 / deepseek-v4.1-flash）",
+  "captainSessionId": "session-9224efaa-dd3a-4128-b4b6-eb000c64982c",
+  "createdAt": 1790001282325,
+  "members": [
+    {
+      "id": "",
+      "name": "eval-sonnet",
+      "role": "架构评估（Sonnet）",
+      "provider": "hagp-a",
+      "model": "claude-sonnet-4-6",
+      "joinedAt": 1790001312656,
+      "status": "idle"
+    },
+    {
+      "id": "",
+      "name": "eval-fable",
+      "role": "架构评估（Fable）",
+      "provider": "hagp-a",
+      "model": "claude-fable-5",
+      "joinedAt": 1790001312668,
+      "status": "idle"
+    },
+    {
+      "id": "",
+      "name": "eval-dsflash",
+      "role": "架构评估（DS Flash）",
+      "provider": "deepseek-official",
+      "model": "deepseek-v4.1-flash",
+      "reasoningEffort": "high",
+      "joinedAt": 1790001325535,
+      "status": "idle"
+    }
+  ],
+  "tasks": [],
+  "taskSeq": 0,
+  "phase": "staged",
+  "planReviewState": "awaiting_review"
+}

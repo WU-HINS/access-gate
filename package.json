@@ -1,0 +1,38 @@
+{
+  "name": "access-gate",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --experimental-strip-types --test test/*.test.ts",
+    "db:generate": "node --experimental-strip-types tools/db-generate.ts",
+    "db:migrate": "node --experimental-strip-types tools/db-migrate.ts",
+    "db:check": "node --experimental-strip-types tools/db-check.ts",
+    "schema:extract": "node --experimental-strip-types tools/extract-doc-schema.ts",
+    "ci": "node --experimental-strip-types tools/ci-gate.ts",
+    "start": "node --experimental-strip-types tools/serve.ts --mode=real",
+    "serve": "node --experimental-strip-types tools/serve.ts",
+    "security": "node --experimental-strip-types tools/security-audit.ts",
+    "verify:real": "node --experimental-strip-types tools/path-probe.ts && node --experimental-strip-types tools/patrol-liveness.ts",
+    "verify:scenario-a": "node --experimental-strip-types --test test/scenario-a.test.ts",
+    "verify:all": "node --experimental-strip-types --test test/scenario-a.test.ts && node --experimental-strip-types tools/serve-real-e2e.ts && node --experimental-strip-types tools/path-probe.ts && node --experimental-strip-types tools/patrol-liveness.ts && node --experimental-strip-types tools/soak.ts --minutes=2 --load=50",
+    "backup": "node --experimental-strip-types tools/backup-restore.ts"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "jose": "^6.2.12",
+    "pg": "^8.23.0",
+    "yaml": "^2.9.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/pg": "^8.23.1",
+    "embedded-postgres": "^18.4.0-beta.17",
+    "typescript": "^5.7.2"
+  }
+}

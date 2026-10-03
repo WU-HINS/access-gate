@@ -1,0 +1,85 @@
+# access-gate · 单站点自部署（M6-7 一键部署）
+#
+# 用法：
+#   docker compose up -d          # 启动（PostgreSQL + 应用）
+#   docker compose logs -f app    # 看日志
+#   docker compose down           # 停止（保留数据卷）
+#   docker compose down -v        # 停止并删除数据（谨慎）
+#
+# ★ 两条与「可入生产」直接相关的设计：
+#   1. **应用不依赖启动顺序赌博**：`depends_on` 只保证容器启动顺序，
+#      因此应用侧有 readiness 探测（`/healthz/ready`），DB 未就绪时它不会宣称 ready。
+#   2. **数据卷显式命名**：备份脚本据此定位数据目录；命名卷也比匿名卷更可运维。
+
+services:
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: accessgate
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?请在 .env 中设置 POSTGRES_PASSWORD}
+      POSTGRES_DB: accessgate
+      # 生产建议：初始化参数（连接数、超时）在此显式声明，而不是靠默认值
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+    command:
+      - postgres
+      - -c
+      - max_connections=100
+      - -c
+      - log_min_duration_statement=500
+    volumes:
+      - ag-db-data:/var/lib/postgresql/data
+    healthcheck:
+      # 用 pg_isready 而不是自己写 SQL：它专门处理「服务器正在启动中」这个中间态
+      test: ["CMD-SHELL", "pg_isready -U accessgate -d accessgate"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+    ports:
+      # 默认只绑定回环：生产环境不应把数据库暴露到公网
+      - "127.0.0.1:5432:5432"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      AG_MODE: real
+      AG_HOST: 0.0.0.0
+      AG_PORT: "8787"
+      AG_DATABASE_URL: postgres://accessgate:${POSTGRES_PASSWORD}@db:5432/accessgate
+      # ★★ 真实模式**强制要求**主密钥（R31 起）：调用方密钥要加密存入 `ag_secrets`。
+      #   缺少它服务会**启动即失败**（而不是静默退回内存存储）。
+      #   ★ 生产环境必须用真实密钥：`openssl rand -hex 32`
+      AG_MASTER_KEY: ${AG_MASTER_KEY:?请设置 AG_MASTER_KEY（32 字节 hex，openssl rand -hex 32）}
+      # OIDC 必填：issuer / clientId / redirectUri（见 docs 的配置说明）
+      AG_OIDC_ISSUER: ${AG_OIDC_ISSUER:?请设置 OIDC issuer}
+      AG_OIDC_CLIENT_ID: ${AG_OIDC_CLIENT_ID:?请设置 OIDC clientId}
+      AG_OIDC_CLIENT_SECRET: ${AG_OIDC_CLIENT_SECRET:-}
+      AG_PUBLIC_URL: ${AG_PUBLIC_URL:?请设置对外访问地址（用于回调 URL）}
+      AG_LOG_LEVEL: ${AG_LOG_LEVEL:-info}
+    ports:
+      - "8787:8787"
+    healthcheck:
+      # ★ 用 readiness 而不是 liveness：容器「活着」不代表「能服务」
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:8787/healthz/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+    stop_grace_period: 45s   # 必须 > 应用的优雅关闭总超时（30s），否则会被 SIGKILL
+    volumes:
+      # 上传的插件包等运行时数据（外置插件的权威副本在 DB 内，这里是缓存）
+      - ag-app-runtime:/app/runtime
+
+volumes:
+  ag-db-data:
+    name: access-gate-db-data
+  ag-app-runtime:
+    name: access-gate-runtime
