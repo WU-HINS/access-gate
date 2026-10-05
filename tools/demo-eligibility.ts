@@ -127,9 +127,16 @@ async function main(): Promise<void> {
   console.log('');
 
   // ── ① 采集：email-domain 插件（零外部依赖，纯本地求值）──
+  // ★★ **主体 id 必须与下游一致**（下面 `collectFactSnapshot(..., 'alice', ...)` 与
+  //    `store.get('alice', ...)` 用的都是 `alice`）。
+  //    此前这里写的是 `'demo-user'` —— 事实写进 `demo-user` 的空间、却从 `alice` 的空间读，
+  //    于是**快照恒为 0 个事实**，演示里每条策略都显示「待确认」，
+  //    M1 的核心验收（"用户能看到差哪一项" + 已达成的那条）**实际上看不到**。
+  //    ★ 这类"读写主体不一致"在真实链路上同样静默：不报错，只是永远取不到值。
+  const SUBJECT = 'alice';
   const manifest = validateManifest(EMAIL_DOMAIN_MANIFEST);
   const store = new InMemoryFactStore();
-  const pipeline = new FactPipeline({ store, manifest, userId: 'demo-user' });
+  const pipeline = new FactPipeline({ store, manifest, userId: SUBJECT });
   const facts = evaluateEmailDomain({ email, emailVerified: true, config: EMAIL_CONFIG });
   if (facts === null) {
     console.log(`⚠️  邮箱 '${email}' 形状非法，无法采集事实（按 missing 处理）`);
@@ -140,7 +147,7 @@ async function main(): Promise<void> {
 
   // 签到事实：用 --checked-in 模拟已签到（★ 必须走 checkin 自己的管线——
   // 事实管线按 manifest 的 factSchema 校验，用 email 的管线写签到事实会被正确拒绝）
-  const checkinPipeline = new FactPipeline({ store, manifest: CHECKIN_MANIFEST, userId: 'demo-user' });
+  const checkinPipeline = new FactPipeline({ store, manifest: CHECKIN_MANIFEST, userId: SUBJECT });
   if (checkedIn) {
     await checkinPipeline.emit({ last_date: now.toISOString().slice(0, 10) }, now);
     console.log('            + checkin 插件 → 已签到');
@@ -154,12 +161,12 @@ async function main(): Promise<void> {
     [{ pluginId: 'email', fields: ['domain', 'is_edu', 'matched_rule', 'verified'], ttl: '30d' }],
     now,
     // ★ 参数顺序：`(store, sources, now, userId, logger?)`——主体必填在前
-    'alice',
+    SUBJECT,
     silentLogger,
   );
   const values = { ...collection.snapshot.values };
   if (checkedIn) {
-    const record = await store.get('alice', 'checkin', 'last_date');
+    const record = await store.get(SUBJECT, 'checkin', 'last_date');
     if (record !== undefined) values['fact.checkin.last_date'] = record.value;
   }
   console.log(`② 快照    : ${Object.keys(values).length} 个事实可用${collection.expired.length > 0 ? `，${collection.expired.length} 个已过期` : ''}`);
