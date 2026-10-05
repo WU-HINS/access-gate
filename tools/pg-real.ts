@@ -50,7 +50,31 @@ const PG_ENV: Record<string, string> = {
  *   若都不存在且当前是 root，则**创建** `appuser`（幂等）。
  *   全部失败时抛出**可操作**的错误（说明如何指定 `AG_PG_USER`）。
  */
-function resolveRunAsUser(): { name: string; uid: number; gid: number } {
+function resolveRunAsUser(): { name: string; uid: number; gid: number } | undefined {
+  // ★★ **不是 root 时必须不降权**（GitHub Actions 上暴露的真实缺陷）：
+  //   非 root 进程执行 `setpriv --reuid=…` 会报
+  //   `setpriv: setresuid failed: Operation not permitted`（EPERM —— 本来就没有权限改 uid），
+  //   于是 `initdb` 直接失败，CI 里表现为「门禁 10 真实 PG 集成」与
+  //   「依赖真实 PG 的单测（pg-real / serve-real）」**一起红**。
+  //   ★ 这是 CI 与开发机**行为分叉**的典型：开发机常以 root 跑（降权必要），
+  //     GitHub runner 以 `runner` 跑（降权既无必要、也无权限）。
+  //   ★ 所以判据是**运行时身份**，而不是环境假设。
+  const isRoot = typeof process.getuid === 'function' && process.getuid() === 0;
+  if (!isRoot) {
+    // ★ 显式要求了 `AG_PG_USER` 却又不具备改 uid 的权限 —— 这是**配置错误**，
+    //   不能静默忽略（否则"我明明指定了 PG 用户，怎么没生效"会变成说不清的现象）。
+    const explicit = process.env['AG_PG_USER'];
+    if (explicit !== undefined && explicit.trim().length > 0) {
+      const uidText = typeof process.getuid === 'function' ? String(process.getuid()) : '未知';
+      throw new Error(
+        `设置了 AG_PG_USER='${explicit}'，但当前进程**不是 root**（uid=${uidText}），无法降权到该用户（setpriv 需要 root）。` +
+          `解决：要么以 root 运行（此时降权才有意义），要么**不要**设 AG_PG_USER（非 root 下直接以当前身份运行 PG 即可）。`,
+      );
+    }
+    // 非 root：PG 不会拒绝当前身份 → 直接以本身份运行（`run()` 对 `user === undefined` 不包 setpriv）
+    return undefined;
+  }
+
   const requested = process.env['AG_PG_USER'];
   // ★ 必须用 **uid/gid 数字**而不是用户名/组名：
   //   `setpriv --regid=nobody` 会失败，因为 `nobody` 的主组叫 **nogroup**
@@ -209,16 +233,22 @@ export async function startRealPostgres(options: { port?: number; dataDir?: stri
   mkdirSync('/tmp', { recursive: true });
 
   // 数据目录必须属于运行 PG 的用户
+  //   ★ 只有**降权**场景才需要 chown（root 建目录 → 把属主交给 PG 用户）；
+  //     非 root 时目录本就是自己的，chown 既无必要、也无权限。
   if (!existsSync(join(dataDir, 'PG_VERSION'))) {
     mkdirSync(dataDir, { recursive: true });
     // ★ 用 uid:gid 数字：把对象直接放进模板串会得到 '[object Object]'（经典 bug）
-    run('chown', ['-R', `${RUN_AS_USER.uid}:${RUN_AS_USER.gid}`, dirname(dataDir)]);
+    if (RUN_AS_USER !== undefined) {
+      run('chown', ['-R', `${RUN_AS_USER.uid}:${RUN_AS_USER.gid}`, dirname(dataDir)]);
+    }
     const init = run(join(PG_BIN, 'initdb'), ['-D', dataDir, '-U', 'accessgate', '--auth=trust', '--encoding=UTF8'], {
       user: RUN_AS_USER,
     });
     if (init.status !== 0) throw new Error(`initdb 失败：${init.stderr.slice(-500)}`);
   }
-  run('chown', ['-R', `${RUN_AS_USER.uid}:${RUN_AS_USER.gid}`, dataDir]);
+  if (RUN_AS_USER !== undefined) {
+    run('chown', ['-R', `${RUN_AS_USER.uid}:${RUN_AS_USER.gid}`, dataDir]);
+  }
 
   // 启动（-k 指定 unix socket 目录，避免 /var/run 权限问题）
   await runAsync(
