@@ -1,0 +1,165 @@
+# Docker 镜像构建与推送
+#
+# 触发与产物（按需求）：
+#   · **push**（CI 完成后自动）→ 打 `ci` 与 `sha-<短 sha>`，推送到 GHCR（配了 DockerHub 则一并推）
+#   · **手动触发**（需填版本号，如 `v1.0.0`）→ 打 `<版本>` 与 `latest`
+#   · **镜像名与仓库名一致**：`ghcr.io/<owner>/access-gate`，DockerHub 侧 `<user>/access-gate`
+#
+# ★★ 两条刻意的设计（不是默认行为，需要说明）：
+#
+# 1. **只在 CI 门禁通过后才构建镜像**：本工作流由 `workflow_run` 挂在 CI 之后，
+#    并用 `conclusion == 'success'` 把关。否则「门禁红、镜像照样发出去」——
+#    而镜像一旦被拉走就收不回来了（tag 可覆盖，别人已经跑的容器不会）。
+#    ★ 手动触发（发版本）时**不经过**这道门：发版是人明确决定的事，
+#      但仍可先看 CI 是否绿（同一提交）。
+#
+# 2. ★★ **DockerHub 是"配置了才推"**：GitHub 不允许在 `if:` 里直接引用 `secrets`，
+#    所以先把 secret 落到 **job 级 env**，再用 `if: env.… != ''` 判断。
+#    未配置时**只推 GHCR**，且不需要任何额外开关 —— 少一个"忘了打开"的变量。
+
+name: Docker
+
+on:
+  # push 先跑 CI；CI 成功后再由这里构建镜像（见上方设计说明 1）
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '版本号（如 v1.0.0）——手动发布时打 <version> 与 latest'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  # ★ 推 GHCR 需要 packages:write（GITHUB_TOKEN 自带，无需额外 secret）
+  packages: write
+
+# 同一引用上的旧构建在新触发后没有意义
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # ★ 供 `if:` 判断用：`secrets` 上下文在 `if` 里不可用，必须经 env 中转
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+
+jobs:
+  image:
+    name: 构建并推送镜像
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    # 手动触发 → 直接跑；CI 触发 → 只有**成功**才跑
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+
+    steps:
+      # workflow_run 下 checkout 默认取**默认分支**，而不是触发它的那个提交 —— 必须显式指定
+      - name: 检出
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
+
+      - name: 计算镜像名与版本
+        id: ctx
+        run: |
+          set -euo pipefail
+          # ★ GHCR 要求仓库路径**全小写**；而 GitHub 的 owner 常含大写（本仓库是 WU-HINS）
+          owner="$(printf '%s' "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')"
+          # ★ 镜像名 = 仓库名（需求如此）
+          name="$(printf '%s' "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')"
+          ghcr="ghcr.io/${owner}/${name}"
+
+          # 需要推送的镜像列表（DockerHub 未配置时只有 GHCR）
+          images="${ghcr}"
+          if [ -n "${DOCKERHUB_USERNAME:-}" ]; then
+            images="${images}"$'\n'"${DOCKERHUB_USERNAME}/${name}"
+          fi
+
+          # 版本：手动触发用输入值；CI 触发用提交短 sha
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            version="${{ inputs.version }}"
+            sha="${{ github.sha }}"
+          else
+            version=""
+            sha="${{ github.event.workflow_run.head_sha }}"
+          fi
+
+          {
+            echo "images<<IMAGES"
+            printf '%s\n' "$images"
+            echo "IMAGES"
+          } >> "$GITHUB_OUTPUT"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "short_sha=$(printf '%s' "$sha" | cut -c1-7)" >> "$GITHUB_OUTPUT"
+          echo "ghcr=${ghcr}" >> "$GITHUB_OUTPUT"
+          # 给日志留一份"这次到底推了什么"的证据
+          echo "镜像仓库：$images"
+          echo "版本    ：${version:-（CI 版）}  sha=${sha:0:7}"
+
+      - name: 生成标签
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.ctx.outputs.images }}
+          # push/CI → `ci` + `sha-xxxxxxx`；手动 → `<version>` + `latest`
+          tags: |
+            type=raw,value=ci,enable=${{ github.event_name != 'workflow_dispatch' }}
+            type=raw,value=sha-${{ steps.ctx.outputs.short_sha }},enable=${{ github.event_name != 'workflow_dispatch' }}
+            type=raw,value=${{ steps.ctx.outputs.version }},enable=${{ github.event_name == 'workflow_dispatch' }}
+            type=raw,value=latest,enable=${{ github.event_name == 'workflow_dispatch' }}
+          labels: |
+            org.opencontainers.image.title=access-gate
+            org.opencontainers.image.revision=${{ steps.ctx.outputs.short_sha }}
+
+      - name: 启用 Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 登录 GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 登录 Docker Hub（仅当仓库配置了凭据）
+        if: env.DOCKERHUB_USERNAME != ''
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: 构建并推送
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          # ★ 显式 push：本工作流的存在意义就是把镜像**发出去**
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # 层缓存走 Actions 缓存：Dockerfile 里依赖层与源码层分开拷贝，
+          # 缓存命中时改源码不会重装依赖
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          # ★ 单架构（amd64）：多架构要过 QEMU，构建时间翻倍而当前无 arm 需求；
+          #   真要 arm64 时再加 platforms（并接受更长的构建时长）
+          platforms: linux/amd64
+
+      - name: 汇总
+        run: |
+          {
+            echo '### 镜像已推送'
+            echo ''
+            echo '| 项 | 值 |'
+            echo '|---|---|'
+            echo "| 版本 | \`${{ steps.ctx.outputs.version || '（CI 版）' }}\` |"
+            echo "| 提交 | \`${{ steps.ctx.outputs.short_sha }}\` |"
+            echo "| DockerHub | ${{ env.DOCKERHUB_USERNAME != '' && '已推送' || '未配置 → 只推 GHCR' }} |"
+            echo ''
+            echo '标签：'
+            echo '```'
+            echo "${{ steps.meta.outputs.tags }}"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
