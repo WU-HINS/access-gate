@@ -1,0 +1,69 @@
+# CI —— 每次 push / PR 都跑**项目自己的 13 项门禁**
+#
+# ★ 为什么不是"另写一套 CI 步骤"：`tools/ci-gate.ts` 就是本项目的验收门禁
+#   （tsc · 单测 · DDL 快照 · db:check · site_id · 裸 SQL · 系统名 · 事务入口 ·
+#     安全自查 · 真实 PG 集成 · 路由/授权一致性 · 性能 · 宿主无知）。
+#   在 GitHub 上**跑同一份**，本地与远端才不会出现"本地绿、远端红"的双标准；
+#   门禁项增删只改一处。
+#
+# ★ 为什么不跑 `verify:all`：它含 2 分钟长跑与 `serve-real-e2e`，属**发布前**验收
+#   （需要有意义的时长与稳定负载），不适合每次 push。它留在发布流程里。
+#
+# ★ 真实 PG 从哪来：`embedded-postgres` 作为 devDependency 携带平台二进制，
+#   在 runner 上就地起库 —— 无需 services 容器，也无需外部凭据。
+#   （它拒绝以 root 运行；GitHub runner 以 `runner` 身份执行，正合要求。）
+
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+# 同一分支的旧运行在新 push 后没有意义 —— 取消它，省额度也省噪音
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: 13 项门禁
+    runs-on: ubuntu-latest
+    # 门禁含「10 万主体性能」与「真实 PG 集成」，给足时间但**不无限等**
+    timeout-minutes: 45
+
+    steps:
+      - name: 检出
+        uses: actions/checkout@v4
+
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          # ★ 与 `package.json` 的 `engines: >=22` 对齐：
+          #   本项目用 `--experimental-strip-types` 直接跑 TS（无构建步骤）
+          node-version: '22'
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 类型检查
+        run: npm run typecheck
+
+      - name: 单测 + 集成
+        run: npm test
+
+      - name: 13 项门禁
+        run: npm run ci
+
+      - name: 失败时保留诊断线索
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-logs
+          # 门禁的产物（DDL 快照/db:check 输出等）——便于无交互排障
+          path: |
+            .snapshots/
+            reports/
+          if-no-files-found: ignore
+          retention-days: 7
